@@ -1,110 +1,97 @@
-<a href="https://demo-nextjs-with-supabase.vercel.app/">
-  <img alt="Next.js and Supabase Starter Kit - the fastest way to build apps with Next.js and Supabase" src="https://demo-nextjs-with-supabase.vercel.app/opengraph-image.png">
-  <h1 align="center">Next.js and Supabase Starter Kit</h1>
-</a>
+# Manish. — Creator Affiliate Storefront
 
-<p align="center">
- The fastest way to build apps with Next.js and Supabase
-</p>
+A high-performance, light-editorial creator affiliate storefront built for Manish ([@manishh_mk_](https://www.instagram.com/manishh_mk_/)).
 
-<p align="center">
-  <a href="#features"><strong>Features</strong></a> ·
-  <a href="#demo"><strong>Demo</strong></a> ·
-  <a href="#deploy-to-vercel"><strong>Deploy to Vercel</strong></a> ·
-  <a href="#clone-and-run-locally"><strong>Clone and run locally</strong></a> ·
-  <a href="#feedback-and-issues"><strong>Feedback and issues</strong></a>
-  <a href="#more-supabase-examples"><strong>More Examples</strong></a>
-</p>
-<br/>
+## Tech Stack
+- **Framework**: Next.js 16 (App Router with Turbopack, React 19)
+- **Styling**: Tailwind CSS (Custom editorial palette: Cream `#F5F2EB`, Charcoal `#2D2D2D`, Accent `#C75B33`)
+- **Typography**: Bricolage Grotesque (Headings) + Inter (Body)
+- **Database & Auth**: Supabase (PostgreSQL, Auth, Storage) — strictly Free Tier
+- **Security**: Strict RLS policies, `is_admin()` SECURITY DEFINER guard, zero service-role keys exposed, HMAC-SHA256 privacy-preserving click tracking
 
-## Features
+---
 
-- Works across the entire [Next.js](https://nextjs.org) stack
-  - App Router
-  - Pages Router
-  - Proxy
-  - Client
-  - Server
-  - It just works!
-- supabase-ssr. A package to configure Supabase Auth to use cookies
-- Password-based authentication block installed via the [Supabase UI Library](https://supabase.com/ui/docs/nextjs/password-based-auth)
-- Styling with [Tailwind CSS](https://tailwindcss.com)
-- Components with [shadcn/ui](https://ui.shadcn.com/)
-- Optional deployment with [Supabase Vercel Integration and Vercel deploy](#deploy-your-own)
-  - Environment variables automatically assigned to Vercel project
+## 1. Environment Variables
 
-## Demo
-
-You can view a fully working demo at [demo-nextjs-with-supabase.vercel.app](https://demo-nextjs-with-supabase.vercel.app/).
-
-## Deploy to Vercel
-
-Vercel deployment will guide you through creating a Supabase account and project.
-
-After installation of the Supabase integration, all relevant environment variables will be assigned to the project so the deployment is fully functioning.
-
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fvercel%2Fnext.js%2Ftree%2Fcanary%2Fexamples%2Fwith-supabase&project-name=nextjs-with-supabase&repository-name=nextjs-with-supabase&demo-title=nextjs-with-supabase&demo-description=This+starter+configures+Supabase+Auth+to+use+cookies%2C+making+the+user%27s+session+available+throughout+the+entire+Next.js+app+-+Client+Components%2C+Server+Components%2C+Route+Handlers%2C+Server+Actions+and+Middleware.&demo-url=https%3A%2F%2Fdemo-nextjs-with-supabase.vercel.app%2F&external-id=https%3A%2F%2Fgithub.com%2Fvercel%2Fnext.js%2Ftree%2Fcanary%2Fexamples%2Fwith-supabase&demo-image=https%3A%2F%2Fdemo-nextjs-with-supabase.vercel.app%2Fopengraph-image.png)
-
-The above will also clone the Starter kit to your GitHub, you can clone that locally and develop locally.
-
-If you wish to just develop locally and not deploy to Vercel, [follow the steps below](#clone-and-run-locally).
-
-## Clone and run locally
-
-1. You'll first need a Supabase project which can be made [via the Supabase dashboard](https://database.new)
-
-2. Create a Next.js app using the Supabase Starter template npx command
-
-   ```bash
-   npx create-next-app --example with-supabase with-supabase-app
-   ```
-
-   ```bash
-   yarn create next-app --example with-supabase with-supabase-app
-   ```
-
-   ```bash
-   pnpm create next-app --example with-supabase with-supabase-app
-   ```
-
-3. Use `cd` to change into the app's directory
-
-   ```bash
-   cd with-supabase-app
-   ```
-
-4. Rename `.env.example` to `.env.local` and update the following:
+Create a `.env.local` file in the project root:
 
 ```env
-NEXT_PUBLIC_SUPABASE_URL=[INSERT SUPABASE PROJECT URL]
-NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=[INSERT SUPABASE PROJECT API PUBLISHABLE OR ANON KEY]
+# Supabase Project API Settings (Settings > API)
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=your-publishable-or-anon-key
+
+# Server-only secret salt for HMAC-SHA256 IP hashing (never exposed to browser)
+# Generate via: node -e "console.log(require('node:crypto').randomBytes(32).toString('hex'))"
+CLICK_SALT=your-random-32-byte-hex-string
 ```
 
-> [!NOTE]
-> This example uses `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, which refers to Supabase's new **publishable** key format.
-> Both legacy **anon** keys and new **publishable** keys can be used with this variable name during the transition period. Supabase's dashboard may show `NEXT_PUBLIC_SUPABASE_ANON_KEY`; its value can be used in this example.
-> See the [full announcement](https://github.com/orgs/supabase/discussions/29260) for more information.
+> **Security Note**: This application uses **no service-role key**. All admin mutations execute using the authenticated user's session token and rely on Postgres RLS + `is_admin()`.
 
-Both `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` can be found in [your Supabase project's API settings](https://supabase.com/dashboard/project/_?showConnect=true)
+---
 
-5. You can now run the Next.js local development server:
+## 2. Database Setup
 
-   ```bash
-   npm run dev
+Run the migrations in your **Supabase Dashboard > SQL Editor**:
+
+1. **Schema Migration (`supabase/migrations/001_init.sql`)**:
+   - Creates `profiles`, `categories`, `products`, `admin_users`, and `product_clicks`.
+   - Adds indexes, `updated_at` triggers, and `profiles_singleton` unique constraint.
+   - Creates the `is_admin()` function (`SECURITY DEFINER`, `search_path = ''`).
+   - Configures explicit `GRANT`s for `anon` and `authenticated` roles (compatible with auto-expose off).
+   - Creates the `record_click()` RPC function (sanitizes inputs, checks published status, records click, returns affiliate URL).
+   - Creates the `get_product_click_summary()` admin analytics function.
+   - Sets up the `product-images` storage bucket (public read, admin-only write, max 2MB).
+
+2. **Seed Data (`supabase/seed.sql`)**:
+   - Seeds the 4 categories: *Grooming & Haircare*, *Men's Fashion*, *Fitness & Lifestyle*, and *Amazon Finds*.
+   - Seeds the default creator profile row for Manish with bracketed placeholders for bio copy.
+
+---
+
+## 3. Creating & Whitelisting Your Admin User
+
+1. In Supabase Dashboard, go to **Authentication > Users > Add user > Create user**.
+2. Enter your admin email and password.
+3. Copy the generated User UID (UUID).
+4. Run this query in the **SQL Editor**:
+   ```sql
+   INSERT INTO public.admin_users (id, role)
+   VALUES ('<PASTE-YOUR-AUTH-USER-UUID-HERE>', 'admin')
+   ON CONFLICT (id) DO NOTHING;
    ```
+5. You can now log in at `/auth/login` to access the full admin dashboard at `/admin`.
 
-   The starter kit should now be running on [localhost:3000](http://localhost:3000/).
+---
 
-6. This template comes with the default shadcn/ui style initialized. If you instead want other ui.shadcn styles, delete `components.json` and [re-install shadcn/ui](https://ui.shadcn.com/docs/installation/next)
+## 4. How to Deploy to Vercel
 
-> Check out [the docs for Local Development](https://supabase.com/docs/guides/getting-started/local-development) to also run Supabase locally.
+1. Push your repository to GitHub.
+2. Go to [vercel.com](https://vercel.com) and click **Add New > Project**.
+3. Import your repository and select the root directory (or `manish-creator-store`).
+4. Under **Environment Variables**, add:
+   - `NEXT_PUBLIC_SUPABASE_URL`
+   - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
+   - `CLICK_SALT`
+5. Click **Deploy**.
 
-## Feedback and issues
+---
 
-Please file feedback and issues over on the [Supabase GitHub org](https://github.com/supabase/supabase/issues/new/choose).
+## 5. Free Tier Keepalive Automation
 
-## More Supabase examples
+Supabase pauses free projects after 7 days of inactivity. A GitHub Actions workflow is included at `.github/workflows/keepalive.yml`:
+- Scheduled every 3 days at 06:00 UTC.
+- Pings the Supabase REST health endpoint.
+- To enable: Add `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` to **GitHub Repository Settings > Secrets and variables > Actions**.
 
-- [Next.js Subscription Payments Starter](https://github.com/vercel/nextjs-subscription-payments)
-- [Cookie-based Auth and the Next.js 13 App Router (free course)](https://youtube.com/playlist?list=PL5S4mPUpp4OtMhpnp93EFSo42iQ40XjbF)
-- [Supabase Auth and the Next.js App Router](https://github.com/supabase/supabase/tree/master/examples/auth/nextjs)
+---
+
+## 6. Pre-Launch Deployment Checklist
+
+- [ ] Applied `supabase/migrations/001_init.sql` and `supabase/seed.sql` in Supabase SQL editor.
+- [ ] Created admin user and whitelisted their UUID in `public.admin_users`.
+- [ ] Generated `CLICK_SALT` and set it in `.env.local` and Vercel environment variables.
+- [ ] Verified login at `/auth/login` and confirmed non-admin accounts cannot access `/admin`.
+- [ ] Uploaded profile portrait and verified bio copy at `/admin/profile`.
+- [ ] Added first batch of products with valid `https://` affiliate links and published them.
+- [ ] Tested `/go/[slug]` click redirection (verifying 302 redirect and click count incrementing).
+- [ ] Added repository secrets for `.github/workflows/keepalive.yml`.
